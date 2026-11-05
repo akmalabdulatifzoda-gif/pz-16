@@ -1,0 +1,39 @@
+name: integration
+on: [push, pull_request]
+
+jobs:
+  # Вариант B: тесты сами поднимают PostgreSQL через testcontainers-go (на ubuntu-latest есть Docker).
+  testcontainers:
+    runs-on: ubuntu-latest
+    env:
+      CI: "true"   # без Docker тесты падают, а не пропускаются
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - run: go vet ./...
+      - run: go test -race -v -count=1 ./integration/...
+
+  # Вариант A: PostgreSQL как service-контейнер, тесты подключаются по DB_DSN.
+  service-container:
+    runs-on: ubuntu-latest
+    services:
+      pg:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: notes_test
+        ports: ["54321:5432"]
+        options: >-
+          --health-cmd "pg_isready -U test -d notes_test"
+          --health-interval 2s --health-timeout 2s --health-retries 20
+    env:
+      DB_DSN: postgres://test:test@localhost:54321/notes_test?sslmode=disable
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - run: go test -v -count=1 ./integration/...

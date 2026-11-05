@@ -1,0 +1,23 @@
+# Мутант: нет триггера updated_at
+--- FAIL: TestUpdateNote (0.07s)
+FAIL	github.com/akmalabdulatifzoda-gif/pz-16/integration	3.013s
+
+# Мутант: нет ON DELETE CASCADE
+--- FAIL: TestDeleteNote (0.08s)
+FAIL	github.com/akmalabdulatifzoda-gif/pz-16/integration	3.265s
+
+# Мутант: заметка коммитится до вставки тегов (нет общей транзакции)
+--- FAIL: TestCreateNote_TransactionRollback (0.08s)
+--- FAIL: TestCreateNote_Validation (0.07s)
+FAIL	github.com/akmalabdulatifzoda-gif/pz-16/integration	3.114s
+
+# Мутант: Delete не возвращает 404 для несуществующей
+--- FAIL: TestDeleteNote (0.08s)
+FAIL	github.com/akmalabdulatifzoda-gif/pz-16/integration	3.207s
+
+# Мутант: курсор включает последнюю запись (<= вместо <)
+--- FAIL: TestListNotes_Pagination (0.10s)
+--- FAIL: TestListNotes_Filters (0.12s)
+--- FAIL: TestListNotes_PaginationStableOnInsert (0.09s)
+FAIL	github.com/akmalabdulatifzoda-gif/pz-16/integration	3.392s
+

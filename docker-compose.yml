@@ -1,0 +1,17 @@
+# Вариант A: тестовая БД поднимается вручную (make up) на порту 54321.
+services:
+  pg:
+    image: postgres:16-alpine
+    container_name: pz16-pg-test
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: notes_test
+    ports: ["54321:5432"]
+    tmpfs:
+      - /var/lib/postgresql/data   # данные в памяти: быстро и всегда «с нуля»
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test -d notes_test"]
+      interval: 2s
+      timeout: 2s
+      retries: 20
